@@ -55,7 +55,8 @@ and can also be called from a terminal.
    Show help:
       pnfl convert-pdb --help
 
-   Example terminal call:
+   Example terminal calls (game plans are optional):
+      pnfl convert-pdb stats.pdb output.xlsm
       pnfl convert-pdb stats.pdb output.xlsm -d defense.pln -o offense.pln
 
 
@@ -68,7 +69,9 @@ and can also be called from a terminal.
    Show help:
       pnfl read-gameplan --help
 
-   Example terminal call:
+   Example terminal calls (--output is optional; without it the
+   play list prints to the screen):
+      pnfl read-gameplan offense.pln
       pnfl read-gameplan offense.pln --output plays.txt
 
 
