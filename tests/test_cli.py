@@ -38,8 +38,12 @@ def test_subcommand_passthrough():
         called_with.extend(argv)
         return 0
 
-    with patch("pnfl.cli.import_module") as mock_import:
-        mock_import.return_value.main = fake_main
+    class FakeEntryPoint:
+        def load(self):
+            return fake_main
+
+    fake_commands = {"read-gameplan": FakeEntryPoint()}
+    with patch("pnfl.cli._discover_commands", return_value=fake_commands):
         result = main(["read-gameplan", "foo.pln", "--sort", "name"])
 
     assert result == 0

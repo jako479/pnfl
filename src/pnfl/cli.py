@@ -2,46 +2,40 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Sequence
-from importlib import import_module
+from importlib.metadata import EntryPoint, entry_points
 
-ALL_COMMANDS = [
-    ("catalog-plays", "pnfl_playcatalog.cli"),
-    ("convert-pdb", "pnfl_pdbtoexcel.cli"),
-    ("read-gameplan", "fbpro98_gameplanreader.cli"),
-    ("write-gameplan", "fbpro98_gameplanwriter.cli"),
-]
+ENTRY_POINT_GROUP = "pnfl.commands"
 
-COMMANDS: dict[str, str] = {}
-for _name, _module in ALL_COMMANDS:
-    try:
-        import_module(_module)
-        COMMANDS[_name] = _module
-    except ImportError:
-        pass
+
+def _discover_commands() -> dict[str, EntryPoint]:
+    """Return {name: EntryPoint} for every installed pnfl subcommand."""
+    return {ep.name: ep for ep in entry_points(group=ENTRY_POINT_GROUP)}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
 
+    commands = _discover_commands()
+
     if not argv or argv[0] in ("-h", "--help"):
-        print_usage()
+        print_usage(commands)
         return 0
 
     command = argv[0]
-    if command not in COMMANDS:
+    if command not in commands:
         print(f"Unknown command: {command}", file=sys.stderr)
-        print_usage()
+        print_usage(commands)
         return 1
 
-    module = import_module(COMMANDS[command])
-    return module.main(argv[1:])
+    func = commands[command].load()
+    return func(argv[1:])
 
 
-def print_usage() -> None:
+def print_usage(commands: dict[str, EntryPoint]) -> None:
     print("usage: pnfl <command> [args...]\n")
     print("commands:")
-    for name in COMMANDS:
+    for name in sorted(commands):
         print(f"  {name}")
 
 
