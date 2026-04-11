@@ -54,7 +54,7 @@ pnfl write-gameplan offense.pln plays.txt
 pnfl write-gameplan offense.pln plays.txt --play-path E:\SIERRA\FbPro98\PNFL
 ```
 
-### `catalog-plays` *(admin only)*
+### `catalog-plays` _(admin only)_
 
 Build an Excel catalog of every play in a PNFL play tree.
 
@@ -107,16 +107,6 @@ End users install via the release zip:
 This installs the bundled wheels into the user's Python environment. After install, `pnfl <command>` is available from any terminal — that is the actual interface to every tool.
 
 Requires Python 3.10 or later with "Add Python to PATH" enabled.
-
-### .bat launcher templates
-
-Each release zip ships a `<command>.bat` file alongside `install.bat` (e.g. `convert-pdb.bat`, `read-gameplan.bat`). These are **example scripts** for users who prefer double-clicking over typing in a terminal. Each one sets a few `SET` variables for file paths and then calls the underlying CLI:
-
-```bat
-pnfl convert-pdb "%PDB_FILE%" "%OUTPUT_FILE%" -d "%DEFENSE_PLN%" -o "%OFFENSE_PLN%"
-```
-
-Users edit the paths in Notepad and double-click to run. They're convenience wrappers, not a separate interface — anything a `.bat` does, the user can do directly with `pnfl <command>` from any terminal.
 
 ## Uninstallation
 
