@@ -12,23 +12,59 @@ pip install -e ".[dev]"
 
 ```bash
 pnfl <command> [args...]
+pnfl --help
 ```
 
-### Coach commands
+## Tools
 
-| Command          | Package                | Description                        |
-| ---------------- | ---------------------- | ---------------------------------- |
-| `convert-pdb`    | pnfl-pdbtoexcel        | Export WinLogStats .pdb to Excel   |
-| `read-gameplan`  | fbpro98-gameplanreader | Extract plays from .pln files      |
-| `write-gameplan` | fbpro98-gameplanwriter | Update .pln files from a play list |
+### `convert-pdb`
 
-### Admin commands
+Export a WinLogStats `.pdb` to an Excel workbook. Optionally annotates with one or two offensive and defensive game plans.
 
-Admin releases include all coach commands plus:
+Provided by [`pnfl-pdbtoexcel`](../pnfl-pdbtoexcel).
 
-| Command         | Package          | Description                     |
-| --------------- | ---------------- | ------------------------------- |
-| `catalog-plays` | pnfl-playcatalog | Build an Excel catalog of plays |
+```bash
+pnfl convert-pdb --help
+pnfl convert-pdb stats.pdb output.xlsm
+pnfl convert-pdb stats.pdb output.xlsm -o offense.pln -d defense.pln
+pnfl convert-pdb stats.pdb output.xlsm -o offense1.pln -o2 offense2.pln -d defense1.pln -d2 defense2.pln
+```
+
+### `read-gameplan`
+
+Extract the play list from a `.pln` game plan file. Outputs to console or text file.
+
+Provided by [`fbpro98-gameplanreader`](../fbpro98-gameplanreader).
+
+```bash
+pnfl read-gameplan --help
+pnfl read-gameplan offense.pln
+pnfl read-gameplan offense.pln --sort name --output plays.txt
+```
+
+### `write-gameplan`
+
+Update the 64 normal-play slots of a `.pln` game plan file from a text file of play names.
+
+Provided by [`fbpro98-gameplanwriter`](../fbpro98-gameplanwriter).
+
+```bash
+pnfl write-gameplan --help
+pnfl write-gameplan offense.pln plays.txt
+pnfl write-gameplan offense.pln plays.txt --play-path E:\SIERRA\FbPro98\PNFL
+```
+
+### `catalog-plays` *(admin only)*
+
+Build an Excel catalog of every play in a PNFL play tree.
+
+Provided by [`pnfl-playcatalog`](../pnfl-playcatalog).
+
+```bash
+pnfl catalog-plays --help
+pnfl catalog-plays catalog.xlsm
+pnfl catalog-plays catalog.xlsm --play-path E:\SIERRA\FbPro98\PNFL
+```
 
 ## Build
 
@@ -68,9 +104,19 @@ End users install via the release zip:
 2. Open a command prompt in that folder.
 3. Run `install.bat`.
 
-This installs the bundled wheels into the user's Python environment. After install, `pnfl <command>` is available from any terminal.
+This installs the bundled wheels into the user's Python environment. After install, `pnfl <command>` is available from any terminal — that is the actual interface to every tool.
 
 Requires Python 3.10 or later with "Add Python to PATH" enabled.
+
+### .bat launcher templates
+
+Each release zip ships a `<command>.bat` file alongside `install.bat` (e.g. `convert-pdb.bat`, `read-gameplan.bat`). These are **example scripts** for users who prefer double-clicking over typing in a terminal. Each one sets a few `SET` variables for file paths and then calls the underlying CLI:
+
+```bat
+pnfl convert-pdb "%PDB_FILE%" "%OUTPUT_FILE%" -d "%DEFENSE_PLN%" -o "%OFFENSE_PLN%"
+```
+
+Users edit the paths in Notepad and double-click to run. They're convenience wrappers, not a separate interface — anything a `.bat` does, the user can do directly with `pnfl <command>` from any terminal.
 
 ## Uninstallation
 

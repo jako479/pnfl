@@ -4,7 +4,7 @@ PNFL
 A bundle of tools for working with FbPro 98 / WinLogStats files:
    convert-pdb     Convert WinLogStats game stats (.pdb) into Excel
    read-gameplan   Extract plays from a game plan (.pln)
-   write-gameplan  Update a game plan (.pln) from a play list
+   write-gameplan  Update a game plan (.pln) from a list of plays
 
 
 REQUIREMENTS
@@ -27,31 +27,77 @@ INSTALLATION
 You only need to run install.bat once.
 
 
-USAGE
+GETTING HELP
+------------
+
+Once installed, the 'pnfl' command is available from any terminal
+(Command Prompt or PowerShell):
+
+   pnfl --help                  list all commands
+   pnfl <command> --help        show help for one command
+
+Each tool below also has its own --help with full options.
+
+
+TOOLS
 -----
 
-Each tool has its own .bat file in this folder:
-   convert-pdb.bat
-   read-gameplan.bat
-   write-gameplan.bat
+Each tool ships with an example .bat launcher in this folder,
+and can also be called from a terminal.
 
-To use a tool:
-1. Open the .bat file in Notepad and set your file paths.
-2. Double-click the .bat file to run.
 
-You can also run any command from a terminal:
-   pnfl <command> [args...]
+1) convert-pdb  --  WinLogStats stats (.pdb) into Excel
+   ----------------------------------------------------
 
-See the .ini files in this folder for additional settings
-(category order, etc.).
+   Example launcher:
+      convert-pdb.bat
+
+   Show help:
+      pnfl convert-pdb --help
+
+   Example terminal call:
+      pnfl convert-pdb stats.pdb output.xlsm -d defense.pln -o offense.pln
+
+
+2) read-gameplan  --  list the plays in a game plan (.pln)
+   -------------------------------------------------------
+
+   Example launcher:
+      read-gameplan.bat
+
+   Show help:
+      pnfl read-gameplan --help
+
+   Example terminal call:
+      pnfl read-gameplan offense.pln --output plays.txt
+
+
+3) write-gameplan  --  update a game plan (.pln) from a play list
+   --------------------------------------------------------------
+
+   Example launcher:
+      write-gameplan.bat
+
+   Show help:
+      pnfl write-gameplan --help
+
+   Example terminal call:
+      pnfl write-gameplan offense.pln plays.txt
+
+
+SETTINGS FILES
+--------------
+
+The .ini files in this folder hold tool settings (category order,
+play paths, etc.). Most coaches will not need to change these.
 
 
 TROUBLESHOOTING
 ---------------
 
 "python is not recognized" or "pip is not recognized":
-    Python was installed without the PATH option. Reinstall Python and
-    check "Add Python to PATH".
+    Python was installed without the PATH option. Reinstall Python
+    and check "Add Python to PATH".
 
 install.bat shows errors:
     Make sure you have an internet connection (some packages are
