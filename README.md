@@ -66,29 +66,50 @@ pnfl catalog-plays catalog.xlsm
 pnfl catalog-plays catalog.xlsm --play-path E:\SIERRA\FbPro98\PNFL
 ```
 
+### `generate-schedule` _(commissioner only)_
+
+Generate a PNFL season schedule with OR-Tools.
+
+Provided by [`pnfl-scheduler`](../pnfl-scheduler).
+
+```bash
+pnfl generate-schedule --help
+pnfl generate-schedule --output season.html --season 2026
+pnfl generate-schedule --output season.html --season 2026 --scheduler two-phase-rank
+```
+
 ## Build
 
 ```bash
 py -3.13 scripts/build_release.py
 ```
 
-Produces two zips in `dist/`:
-
-- **PNFL-v{version}.zip** — coach release
-- **PNFL-Admin-v{version}.zip** — admin release (superset of coach)
+Produces **PNFL-v{version}.zip** in `dist/` — the coach release. Admin and commissioner releases are built from the private `pnfl-admin` orchestration repo (sibling of this one) and are not produced by this script.
 
 ### Configuring release contents
 
 Edit the lists in `scripts/build_release.py`:
 
-- `COACH_SUBCOMMANDS` — subcommand projects included in both releases
-- `SHARED_DEPENDENCY_PROJECTS` — private projects built as wheels for all releases
-- `SHARED_PYPI_DEPENDENCIES` — PyPI packages needed by all releases
-- `ADMIN_SUBCOMMANDS` — subcommand projects added only to the admin release
-- `ADMIN_DEPENDENCY_PROJECTS` — private projects needed only by admin subcommands
-- `ADMIN_PYPI_DEPENDENCIES` — PyPI packages needed only by admin subcommands
+- `COACH_SUBCOMMANDS` — subcommand projects shipped in the coach release
+- `SHARED_DEPENDENCY_PROJECTS` — private library projects built as wheels for the release
 
 The CLI auto-discovers available commands at runtime, so no code changes are needed when adding or removing subcommands from a release.
+
+### Third-party PyPI dependencies (`release-requirements.txt`)
+
+This file is a pinned-version manifest of every third-party PyPI package shipped in the release zip. The build script feeds it to `pip download`, which resolves transitive dependencies automatically and downloads every required wheel into the release `packages/` folder.
+
+Format is standard pip requirements syntax:
+
+```
+xlsxwriter==3.2.9
+```
+
+Rules:
+
+- **Only list top-level deps.** Transitive deps (what xlsxwriter itself depends on) are pulled automatically — do not list them.
+- **Pin exact versions** (`==`) for reproducible builds. Without a pin, every release rebuild could grab a different version.
+- **Add a line** when a subcommand gains a new third-party dep. To bump a pin, install the new version locally and update the version number here.
 
 ## Testing
 

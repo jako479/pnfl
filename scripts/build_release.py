@@ -39,8 +39,9 @@ COACH_SUBCOMMANDS = [
     PNFL_ROOT / "pnfl-pdbtoexcel",
 ]
 
-# PyPI dependencies shipped in the release.
-SHARED_PYPI_DEPENDENCIES: list[str] = ["xlsxwriter"]
+# Pinned third-party PyPI packages shipped in the release. Transitive deps
+# resolved automatically by pip; only top-level entries need to be listed.
+RELEASE_REQUIREMENTS = PROJECT_ROOT / "release-requirements.txt"
 
 
 def get_version() -> str:
@@ -57,24 +58,35 @@ def build_wheel(project_dir: Path, output_dir: Path) -> None:
     print(f"  Building wheel: {project_dir.name}")
     subprocess.run(
         [
-            sys.executable, "-m", "pip", "wheel",
-            "--no-deps", "--wheel-dir", str(output_dir), str(project_dir),
+            sys.executable,
+            "-m",
+            "pip",
+            "wheel",
+            "--no-deps",
+            "--wheel-dir",
+            str(output_dir),
+            str(project_dir),
         ],
         check=True,
     )
 
 
-def download_pypi_deps(packages: list[str], output_dir: Path) -> None:
-    """Download PyPI packages as wheels into the output directory."""
-    for package in packages:
-        print(f"  Downloading: {package}")
-        subprocess.run(
-            [
-                sys.executable, "-m", "pip", "download",
-                "--no-deps", "-d", str(output_dir), package,
-            ],
-            check=True,
-        )
+def download_pypi_deps(requirements_file: Path, output_dir: Path) -> None:
+    """Download wheels for every PyPI package in the requirements file (with transitive deps)."""
+    print(f"  Downloading from: {requirements_file.name}")
+    subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "pip",
+            "download",
+            "-r",
+            str(requirements_file),
+            "-d",
+            str(output_dir),
+        ],
+        check=True,
+    )
 
 
 def copy_subproject_release_artifacts(project_dir: Path, staging: Path) -> None:
@@ -118,9 +130,9 @@ def stage_release(release_name: str, dist_dir: Path) -> Path:
     # Build the pnfl umbrella wheel (provides the `pnfl` console script).
     build_wheel(PROJECT_ROOT, packages_dir)
 
-    # Download PyPI dependencies.
-    if SHARED_PYPI_DEPENDENCIES:
-        download_pypi_deps(SHARED_PYPI_DEPENDENCIES, packages_dir)
+    # Download PyPI dependencies (root + transitive) from the pinned lock file.
+    if RELEASE_REQUIREMENTS.is_file():
+        download_pypi_deps(RELEASE_REQUIREMENTS, packages_dir)
 
     # Harvest each subproject's user-facing release artifacts (.bat, .ini).
     for project in COACH_SUBCOMMANDS:

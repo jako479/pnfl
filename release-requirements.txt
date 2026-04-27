@@ -1,0 +1,6 @@
+# Third-party PyPI packages bundled in PNFL release zips.
+# Pinned versions ensure reproducible release builds.
+# Add new packages here when a subcommand gains a new third-party dependency.
+# Transitive dependencies are resolved automatically by `pip download` and
+# do NOT need to be listed.
+xlsxwriter==3.2.9
