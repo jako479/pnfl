@@ -146,7 +146,7 @@ def stage_release(release_name: str, dist_dir: Path) -> Path:
                 shutil.copy2(release_file, staging)
 
     # License.
-    license_src = PROJECT_ROOT / "LICENSE.txt"
+    license_src = PROJECT_ROOT / "LICENSE"
     if license_src.is_file():
         shutil.copy2(license_src, staging)
 
