@@ -6,7 +6,7 @@ Umbrella CLI that dispatches `pnfl <command>` invocations to subcommand packages
 
 ```
 src/pnfl/
-├── __init__.py    # docstring
+├── __init__.py    # empty package marker
 └── cli.py         # entry-point discovery + dispatch + main()
 ```
 
