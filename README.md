@@ -39,7 +39,7 @@ Provided by [`fbpro98-gameplanreader`](../fbpro98-gameplanreader).
 ```bash
 pnfl read-gameplan --help
 pnfl read-gameplan offense.pln
-pnfl read-gameplan offense.pln --sort name --output plays.txt
+pnfl read-gameplan offense.pln --sort name --normal-out plays.txt
 ```
 
 ### `write-gameplan`
@@ -127,7 +127,7 @@ End users install via the release zip:
 
 This installs the bundled wheels into the user's Python environment. After install, `pnfl <command>` is available from any terminal — that is the actual interface to every tool.
 
-Requires Python 3.10 or later with "Add Python to PATH" enabled.
+Requires Python 3.13 or later with "Add Python to PATH" enabled.
 
 ## Uninstallation
 

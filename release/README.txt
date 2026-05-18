@@ -10,7 +10,7 @@ A bundle of tools for working with FbPro 98 / WinLogStats files:
 REQUIREMENTS
 ------------
 
-Python 3.10 or later.
+Python 3.13 or later.
 Download from: https://www.python.org/downloads/
 
 IMPORTANT: During Python installation, check the box that says
@@ -69,10 +69,10 @@ and can also be called from a terminal.
    Show help:
       pnfl read-gameplan --help
 
-   Example terminal calls (--output is optional; without it the
+   Example terminal calls (--normal-out is optional; without it the
    play list prints to the screen):
       pnfl read-gameplan offense.pln
-      pnfl read-gameplan offense.pln --output plays.txt
+      pnfl read-gameplan offense.pln --normal-out plays.txt
 
 
 3) write-gameplan  --  update a game plan (.pln) from a play list
