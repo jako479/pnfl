@@ -17,10 +17,78 @@ EXPECTED_DIR = DATA_DIR / "expected"
 PLAYPOOL_DIR = DATA_DIR / "plays"
 TEMPLATE_PLN = DATA_DIR / "O_64_06a.pln"
 GOLD_PLN = EXPECTED_DIR / "O_64_06a.pln"
+SEEDED_AF_KO_PLN = DATA_DIR / "seeded_specials_af_ko.pln"
 
-# AF-KO.ply (special_category=2 = Kickoff) is the only special-teams play in
-# the test playpool, so round-trip tests for specials must source from a PLN
-# that uses only that play.
+# Pinned values for SEEDED_AF_KO_PLN: TEMPLATE_PLN's custom normals with
+# AF-KO as the only custom special (AF-KO.ply is the only special-teams
+# play in the test playpool).
+EXPECTED_AF_KO_NORMALS: list[str] = [
+    "or45rl01",
+    "or10rlrg",
+    "sf35hevy",
+    "ne25rls1",
+    "tt10draw",
+    "db57rrlt",
+    "sf68swp1",
+    "at21draw",
+    "or68rmtr",
+    "sf28ore3",
+    "mn24ct11",
+    "dc14rm02",
+    "orx8rmt2",
+    "dn28rmx3",
+    "kc27swp3",
+    "jj41rodr",
+    "mn21ctr",
+    "dn28rm01",
+    "jj1aarrx",
+    "af1awagr",
+    "jj1adrgx",
+    "af1ain2t",
+    "kc1xhoth",
+    "sf1aslnt",
+    "ps1hwagr",
+    "kc2bmnr1",
+    "lv2z2out",
+    "lv2afloc",
+    "lac2yspd",
+    "kc2aslot",
+    "gpa2zfax",
+    "sf3uzipt",
+    "dn3ysr01",
+    "dn3x4got",
+    "ne3ybblt",
+    "gpa3xfaz",
+    "wa7yafly",
+    "at7awgrt",
+    "lv4xzzip",
+    "at4aqp01",
+    "kc4zqukb",
+    "at4acrsb",
+    "la4xwhdg",
+    "gpa5xcoy",
+    "atf5zcsb",
+    "sf5xmima",
+    "sf8bstop",
+    "gp5xtop1",
+    "at8zrold",
+    "atf6zrgs",
+    "sf6arolr",
+    "or6z01r",
+    "jj66xhot",
+    "kc6spidr",
+    "at9axcrx",
+    "or91flyx",
+    "az9zcutl",
+    "ny9hwhlr",
+    "atgzslot",
+    "atfgslot",
+    "gbgpx03",
+    "ny0zflyz",
+    "or0hsnap",
+    "atf0lobt",
+]
+EXPECTED_AF_KO_SPECIALS: list[str | None] = [None, "af-ko", None, None, None, None, None, None, None, None]
 
 
 def _custom_normal_names(pln: Path) -> list[str]:
@@ -31,27 +99,6 @@ def _custom_normal_names(pln: Path) -> list[str]:
 def _custom_special_names(pln: Path) -> list[str | None]:
     gp = read_gameplan(pln)
     return [(p.name.casefold() if p is not None else None) for p in gp.custom_special_plays]
-
-
-def _seed_special_source(tmp_path: Path) -> Path:
-    """Build a source PLN whose only custom special is AF-KO (slot 2 = Kickoff)."""
-    src = tmp_path / "seed.pln"
-    shutil.copy2(TEMPLATE_PLN, src)
-    spec_txt = tmp_path / "_seed_spec.txt"
-    spec_txt.write_text("AF-KO\n", encoding="utf-8")
-    assert (
-        write_main(
-            [
-                str(src),
-                "--special-plays",
-                str(spec_txt),
-                "--play-path",
-                str(PLAYPOOL_DIR),
-            ]
-        )
-        == 0
-    )
-    return src
 
 
 # ---------- file-based round trip ----------
@@ -81,12 +128,9 @@ def test_gameplan_round_trip_normal_file(tmp_path: Path) -> None:
 
 
 def test_gameplan_round_trip_special_file(tmp_path: Path) -> None:
-    """Reader extracts specials from a seeded PLN; writer applies them back; specials survive, normals untouched."""
-    source = _seed_special_source(tmp_path)
-    expected_specials = _custom_special_names(source)
-
+    """Reader extracts specials from the seeded PLN; writer applies them; specials match pinned values, normals untouched."""
     spec_txt = tmp_path / "spec.txt"
-    assert read_main([str(source), "--special-out", str(spec_txt)]) == 0
+    assert read_main([str(SEEDED_AF_KO_PLN), "--special-out", str(spec_txt)]) == 0
 
     target_pln = tmp_path / "target.pln"
     shutil.copy2(TEMPLATE_PLN, target_pln)
@@ -104,38 +148,18 @@ def test_gameplan_round_trip_special_file(tmp_path: Path) -> None:
         == 0
     )
 
-    assert _custom_special_names(target_pln) == expected_specials
+    assert _custom_special_names(target_pln) == EXPECTED_AF_KO_SPECIALS
     assert _custom_normal_names(target_pln) == pre_normals
 
 
 def test_gameplan_round_trip_combined_files(tmp_path: Path) -> None:
-    # Compose source: gold's normals, AF-KO as the only special.
-    source = tmp_path / "source.pln"
-    shutil.copy(GOLD_PLN, source)
-    source.chmod(0o644)
-    spec_seed = tmp_path / "_seed_spec.txt"
-    spec_seed.write_text("AF-KO\n", encoding="utf-8")
-    assert (
-        write_main(
-            [
-                str(source),
-                "--special-plays",
-                str(spec_seed),
-                "--play-path",
-                str(PLAYPOOL_DIR),
-            ]
-        )
-        == 0
-    )
-    expected_normals = _custom_normal_names(source)
-    expected_specials = _custom_special_names(source)
-
+    """Reader extracts normals+specials from the seeded PLN; writer applies them; both match pinned values."""
     n_path = tmp_path / "n.txt"
     s_path = tmp_path / "s.txt"
     assert (
         read_main(
             [
-                str(source),
+                str(SEEDED_AF_KO_PLN),
                 "--normal-out",
                 str(n_path),
                 "--special-out",
@@ -162,8 +186,8 @@ def test_gameplan_round_trip_combined_files(tmp_path: Path) -> None:
         == 0
     )
 
-    assert _custom_normal_names(target_pln) == expected_normals
-    assert _custom_special_names(target_pln) == expected_specials
+    assert _custom_normal_names(target_pln) == EXPECTED_AF_KO_NORMALS
+    assert _custom_special_names(target_pln) == EXPECTED_AF_KO_SPECIALS
 
 
 # ---------- stdin/stdout round trip ----------
@@ -175,11 +199,7 @@ def test_gameplan_round_trip_combined_stdin(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Reader emits 64+10 headerless lines; writer reads the 74-line combined stream from stdin."""
-    source = _seed_special_source(tmp_path)
-    expected_normals = _custom_normal_names(source)
-    expected_specials = _custom_special_names(source)
-
-    assert read_main([str(source), "--normal-out", "-", "--special-out", "-"]) == 0
+    assert read_main([str(SEEDED_AF_KO_PLN), "--normal-out", "-", "--special-out", "-"]) == 0
     captured = capsys.readouterr().out
     assert "===" not in captured  # headerless
     assert len(captured.splitlines()) == 74
@@ -203,8 +223,8 @@ def test_gameplan_round_trip_combined_stdin(
         == 0
     )
 
-    assert _custom_normal_names(target_pln) == expected_normals
-    assert _custom_special_names(target_pln) == expected_specials
+    assert _custom_normal_names(target_pln) == EXPECTED_AF_KO_NORMALS
+    assert _custom_special_names(target_pln) == EXPECTED_AF_KO_SPECIALS
 
 
 def test_gameplan_round_trip_normal_stdin(
@@ -243,10 +263,7 @@ def test_gameplan_round_trip_special_stdin(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Reader emits headerless special-only via `--special-out -`, writer consumes from stdin."""
-    source = _seed_special_source(tmp_path)
-    expected_specials = _custom_special_names(source)
-
-    assert read_main([str(source), "--special-out", "-"]) == 0
+    assert read_main([str(SEEDED_AF_KO_PLN), "--special-out", "-"]) == 0
     captured = capsys.readouterr().out
     assert "===" not in captured  # headerless
     assert len(captured.splitlines()) == 10
@@ -269,5 +286,5 @@ def test_gameplan_round_trip_special_stdin(
         == 0
     )
 
-    assert _custom_special_names(target_pln) == expected_specials
+    assert _custom_special_names(target_pln) == EXPECTED_AF_KO_SPECIALS
     assert _custom_normal_names(target_pln) == pre_normals

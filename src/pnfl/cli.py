@@ -4,6 +4,8 @@ import sys
 from collections.abc import Sequence
 from importlib.metadata import EntryPoint, entry_points
 
+from pnfl._logging import configure_logging
+
 ENTRY_POINT_GROUP = "pnfl.commands"
 
 
@@ -28,6 +30,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print_usage(commands)
         return 1
 
+    configure_logging()
     func = commands[command].load()
     return func(argv[1:])
 
