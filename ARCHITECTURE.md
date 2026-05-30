@@ -41,7 +41,7 @@ Each subcommand project declares its CLI in its own `pyproject.toml`:
 
 ```toml
 [project.entry-points."pnfl.commands"]
-read-gameplan = "fbpro98_gameplanreader.cli:main"
+read-gameplan = "pnfl_gameplanreader.cli:main"
 ```
 
 `importlib.metadata.entry_points(group="pnfl.commands")` then surfaces the command at runtime, so adding or removing a subcommand from a release requires no code change here.

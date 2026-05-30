@@ -34,7 +34,7 @@ pnfl convert-pdb stats.pdb output.xlsm -o offense1.pln -o2 offense2.pln -d defen
 
 Extract the play list from a `.pln` game plan file. Outputs to console or text file.
 
-Provided by [`fbpro98-gameplanreader`](../fbpro98-gameplanreader).
+Provided by [`pnfl-gameplanreader`](../pnfl-gameplanreader).
 
 ```bash
 pnfl read-gameplan --help
@@ -46,12 +46,38 @@ pnfl read-gameplan offense.pln --sort name --normal-out plays.txt
 
 Update the 64 normal-play slots of a `.pln` game plan file from a text file of play names.
 
-Provided by [`fbpro98-gameplanwriter`](../fbpro98-gameplanwriter).
+Provided by [`pnfl-gameplanwriter`](../pnfl-gameplanwriter).
 
 ```bash
 pnfl write-gameplan --help
 pnfl write-gameplan offense.pln plays.txt
 pnfl write-gameplan offense.pln plays.txt --play-path E:\SIERRA\FbPro98\PNFL
+```
+
+### `check-gameplan`
+
+Validate one or more `.pln` files against the PNFL rule set.
+
+Provided by [`pnfl-gameplanreader`](../pnfl-gameplanreader).
+
+```bash
+pnfl check-gameplan --help
+pnfl check-gameplan Off1.pln Off2.pln Def1.pln Def2.pln
+pnfl check-gameplan path\to\gameplans
+pnfl check-gameplan path\to\gameplans -r
+```
+
+### `check-profile`
+
+Validate one or more `.prf` coaching profile files against the PNFL rule set.
+
+Provided by [`pnfl-profilereader`](../pnfl-profilereader).
+
+```bash
+pnfl check-profile --help
+pnfl check-profile OFF1.prf DEF1.prf
+pnfl check-profile path\to\profiles
+pnfl check-profile path\to\profiles -r
 ```
 
 ### `catalog-plays` _(admin only)_
@@ -78,7 +104,17 @@ pnfl generate-schedule --output season.html --season 2026
 pnfl generate-schedule --output season.html --season 2026 --scheduler two-phase-rank
 ```
 
-## Build
+## Building a Release
+
+Umbrella ships these artifacts in `PNFL-v{version}.zip`:
+
+- `release/README.txt` — user-facing tool overview
+- `release/install.bat` — installer
+- `LICENSE`
+- Python wheel for the `pnfl` package (provides the `pnfl` console command)
+- Wheels and release artifacts from every subproject in `COACH_SUBCOMMANDS`
+- Wheels for every project in `SHARED_DEPENDENCY_PROJECTS`
+- Third-party PyPI dependency wheels (resolved from `release-requirements.txt`)
 
 ```bash
 py -3.13 scripts/build_release.py
@@ -132,7 +168,7 @@ Requires Python 3.13 or later with "Add Python to PATH" enabled.
 ## Uninstallation
 
 ```bash
-py -m pip uninstall pnfl pnfl-pdbtoexcel pnfl-playcatalog fbpro98-gameplanreader fbpro98-gameplanwriter fbpro98-gameplan fbpro98-play pnfl-playpool
+py -m pip uninstall pnfl pnfl-pdbtoexcel pnfl-playcatalog pnfl-gameplanreader pnfl-gameplanwriter pnfl-gameplan fbpro98-gameplan fbpro98-play pnfl-playpool
 ```
 
 Coach releases won't have `pnfl-playcatalog` — pip will warn and skip it.

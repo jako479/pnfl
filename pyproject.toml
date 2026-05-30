@@ -14,8 +14,8 @@ requires-python = ">=3.13"
 dependencies = [
     "pnfl-playcatalog",
     "pnfl-pdbtoexcel",
-    "fbpro98-gameplanreader",
-    "fbpro98-gameplanwriter",
+    "pnfl-gameplanreader",
+    "pnfl-gameplanwriter",
 ]
 
 [project.scripts]

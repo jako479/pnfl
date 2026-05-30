@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 from fbpro98_gameplan import CustomPlay, read_gameplan
-from fbpro98_gameplanreader.cli import main as read_main
-from fbpro98_gameplanwriter.cli import main as write_main
+from pnfl_gameplanreader.cli import main as read_main
+from pnfl_gameplanwriter.cli import main as write_main
 
 TESTS_DIR = Path(__file__).resolve().parent
 DATA_DIR = TESTS_DIR / "data"

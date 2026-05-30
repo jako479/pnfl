@@ -34,8 +34,8 @@ SHARED_DEPENDENCY_PROJECTS = [
 
 # Coach subcommand projects shipped in the release.
 COACH_SUBCOMMANDS = [
-    PNFL_ROOT / "fbpro98-gameplanreader",
-    PNFL_ROOT / "fbpro98-gameplanwriter",
+    PNFL_ROOT / "pnfl-gameplanreader",
+    PNFL_ROOT / "pnfl-gameplanwriter",
     PNFL_ROOT / "pnfl-pdbtoexcel",
 ]
 

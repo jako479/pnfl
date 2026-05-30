@@ -85,7 +85,7 @@ and can also be called from a terminal.
       pnfl write-gameplan --help
 
    Example terminal call:
-      pnfl write-gameplan offense.pln plays.txt
+      pnfl write-gameplan offense.pln --normal-plays plays.txt
 
 
 SETTINGS FILES
