@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 import sys
+import warnings
 from collections.abc import Sequence
 from importlib.metadata import EntryPoint, entry_points
 
-from pnfl._logging import configure_logging
+from rich.console import Console
+from rich.logging import RichHandler
 
 ENTRY_POINT_GROUP = "pnfl.commands"
 
@@ -30,7 +33,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         print_usage(commands)
         return 1
 
-    configure_logging()
+    handler = RichHandler(console=Console(stderr=True), show_time=False, show_path=False, markup=False)
+    logging.basicConfig(level=logging.INFO, format="%(message)s", handlers=[handler])
+    warnings.formatwarning = lambda message, *_, **__: f"{message}\n"
+    logging.captureWarnings(True)
+
     func = commands[command].load()
     return func(argv[1:])
 
