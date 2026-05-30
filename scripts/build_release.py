@@ -29,13 +29,18 @@ PNFL_ROOT = PROJECT_ROOT.parent
 SHARED_DEPENDENCY_PROJECTS = [
     PNFL_ROOT / "fbpro98-play",
     PNFL_ROOT / "fbpro98-gameplan",
+    PNFL_ROOT / "fbpro98-profile",
     PNFL_ROOT / "pnfl-playpool",
+    PNFL_ROOT / "pnfl-gameplan",
+    PNFL_ROOT / "pnfl-profile",
 ]
 
 # Coach subcommand projects shipped in the release.
 COACH_SUBCOMMANDS = [
     PNFL_ROOT / "pnfl-gameplanreader",
     PNFL_ROOT / "pnfl-gameplanwriter",
+    PNFL_ROOT / "pnfl-profilereader",
+    PNFL_ROOT / "pnfl-profilewriter",
     PNFL_ROOT / "pnfl-pdbtoexcel",
 ]
 

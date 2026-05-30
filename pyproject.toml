@@ -16,6 +16,8 @@ dependencies = [
     "pnfl-pdbtoexcel",
     "pnfl-gameplanreader",
     "pnfl-gameplanwriter",
+    "pnfl-profilereader",
+    "pnfl-profilewriter",
 ]
 
 [project.scripts]
