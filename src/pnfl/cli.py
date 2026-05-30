@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import sys
-import warnings
 from collections.abc import Sequence
 from importlib.metadata import EntryPoint, entry_points
 
@@ -35,8 +34,6 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     handler = RichHandler(console=Console(stderr=True), show_time=False, show_path=False, markup=False)
     logging.basicConfig(level=logging.INFO, format="%(message)s", handlers=[handler])
-    warnings.formatwarning = lambda message, *_, **__: f"{message}\n"
-    logging.captureWarnings(True)
 
     func = commands[command].load()
     return func(argv[1:])
